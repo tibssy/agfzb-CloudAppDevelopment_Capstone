@@ -82,7 +82,6 @@ def get_dealerships(request):
 # def get_dealer_details(request, dealer_id):
 # ...
 
-
 # Create a `add_review` view to submit a review
 # def add_review(request, dealer_id):
 # ...
