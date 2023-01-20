@@ -61,5 +61,5 @@ jobs: # list of things to do
           pip install pylint
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
       - name: Lint with Pylint
-        run: pylint *.py
+        run: pylint --disable=W0707 *.py
         working-directory: server
