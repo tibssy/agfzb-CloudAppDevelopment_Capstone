@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 <body>
-     <nav class="navbar navbar-light bg-light shadow">
+     <nav class="navbar navbar-light bg-light shadow fixed-top">
         <div class="container">
             <div class="navbar-header">
                 <a class="navbar-brand" href="{% url 'djangoapp:index' %}">Dealership Review</a>
@@ -36,5 +36,18 @@
             </ul>
         </div>
     </nav>
+    <div class="container  pt-5 pb-5">
+        {% for dealership in dealerships %}
+            <div class="container mt-5 p-3 border shadow">
+                <h1>{{ dealership.full_name }}</h1>
+                <p>{{ dealership.state }}</p>
+                <p>{{ dealership.city }}</p>
+                <p>{{ dealership.address }}</p>
+            </div>
+        {% endfor %}
+    </div>
+
+
+
 </body>
 </html>

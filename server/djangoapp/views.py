@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404, render, redirect
 # from .models import related models
 # from .restapis import related methods
-from .restapis import get_dealers_from_cf
+from .restapis import get_dealers_from_cf, get_dealer_reviews_from_cf
 from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
 from datetime import datetime
@@ -77,23 +77,32 @@ def registration_request(request):
 #     context = {}
 #     if request.method == "GET":
 #         return render(request, 'djangoapp/index.html', context)
-
 def get_dealerships(request):
+    context = {}
     if request.method == 'GET':
         url = 'https://eu-gb.functions.appdomain.cloud/api/v1/web/tibssy1982_dev/api/get-dealership'
         # Get dealers from the URL
         dealerships = get_dealers_from_cf(url)
-        for i in dealerships:
-            print(i.full_name)
         # Concat all dealer's short name
-        dealer_names = ' '.join([dealer.short_name for dealer in dealerships])
+        # dealer_names = ' '.join([dealer.short_name for dealer in dealerships])
+        dealer_names = [dealer.short_name for dealer in dealerships]
         # Return a list of dealer short name
-        return HttpResponse(dealer_names)
+        context['dealerships'] = dealerships
+        # return HttpResponse(dealer_names)
+        return render(request, 'djangoapp/index.html', context)
 
 
 # Create a `get_dealer_details` view to render the reviews of a dealer
-# def get_dealer_details(request, dealer_id):
-# ...
+def get_dealer_details(request, dealer_id):
+# def get_dealer_details(request):
+    context = {}
+    if request.method == 'GET':
+        url = "https://eu-gb.functions.appdomain.cloud/api/v1/web/tibssy1982_dev/api/get-review"
+        reviews = get_dealer_reviews_from_cf(url, dealerId=dealer_id)
+        review_names = ', '.join([f'[ Name: {review.name}, Review: {review.review} ]' for review in reviews])
+        # Return a list of dealer short name
+        return HttpResponse(review_names)
+
 
 # Create a `add_review` view to submit a review
 
