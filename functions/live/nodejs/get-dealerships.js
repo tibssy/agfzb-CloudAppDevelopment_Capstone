@@ -10,7 +10,7 @@ async function main(params) {
     cloudant.setServiceUrl(params.COUCH_URL);
     try {
         let dealerships = await cloudant.postFind({ db: dbName, selector:{state:params.state}});
-        return { body: dealerships.result.docs}
+        return { headers: { 'Content-Type': 'application/json' }, body: dealerships.result.docs }
     } catch (error) {
         return { error: error.description };
     }

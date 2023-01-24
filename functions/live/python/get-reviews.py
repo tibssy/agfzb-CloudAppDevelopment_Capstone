@@ -14,10 +14,10 @@ def main(param_dict):
         if keyword in param_dict:
             selector = {"dealership": int(param_dict[keyword])}
             filtered = service.post_find(db=db_name, selector=selector)
-            return { "body": filtered.result['docs']}
+            return {"headers": {"Content-Type": "application/json"}, "body": filtered.result["docs"]}
 
         reviews = service.post_all_docs(db=db_name, include_docs=True)
-        return {"body": [i['doc'] for i in reviews.result['rows']]}
+        return {"headers": {"Content-Type": "application/json"}, "body": [i["doc"] for i in reviews.result["rows"]]}
 
     except ApiException as ae:
         if ("reason" in ae.http_response.json()):
