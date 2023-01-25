@@ -1,20 +1,22 @@
 import requests
 import json
 # import related models here
+import json
 from .models import CarDealer, DealerReview
 from requests.auth import HTTPBasicAuth
 
 
 # Create a `get_request` to make HTTP GET requests
-def get_request(url, api_key=None, **kwargs):
+def get_request(url, **kwargs):
     print(f'get_request: {kwargs}')
     print(f'GET from {url}')
 
+    api_key = kwargs.get('api_key')
     headers = {'Content-Type': 'application/json'}
-    auth = HTTPBasicAuth('apikey', api_key) if api_key else None
+    authenticator = HTTPBasicAuth('apikey', api_key) if api_key else None
 
     try:
-        response = requests.get(url, auth=auth, headers=headers, params=kwargs)
+        response = requests.get(url, auth=authenticator, headers=headers, params=kwargs)
     except:
         print("Network exception occurred")
     else:
@@ -72,24 +74,25 @@ def get_dealer_reviews_from_cf(url, **kwargs):
                                   sentiment=review.get("sentiment"),
                                   id=review.get("id"))
 
-        # review_obj = DealerReview(dealership=review["dealership"],
-        #                           name=review["name"],
-        #                           purchase=review["purchase"],
-        #                           review=review["review"],
-        #                           purchase_date=review["purchase_date"],
-        #                           car_make=review["car_make"],
-        #                           car_model=review["car_model"],
-        #                           car_year=review["car_year"],
-        #                           sentiment=review["sentiment"],
-        #                           id=review["id"])
-
+        review_obj.sentiment = analyze_review_sentiments(review_obj.review)
         results.append(review_obj)
 
     return results
 
 
 # Create an `analyze_review_sentiments` method to call Watson NLU and analyze text
-def analyze_review_sentiments(text):
-    pass
+def analyze_review_sentiments(dealerreview):
+    if not dealerreview:
+        return "neutral"
+
+    url = None
+    api_key = None
+    json_data = get_request(url=f'{url}/v1/analyze', api_key=api_key, version="2018-03-16", text=dealerreview, features="sentiment", return_analyzed_text=True, language='en')
+    if json_data and json_data.get("sentiment"):
+        print(json_data["sentiment"]["document"]["label"])
+        return json_data["sentiment"]["document"]["label"]
+    else:
+        print("neutral")
+        return "neutral"
 # - Call get_request() with specified arguments
 # - Get the returned sentiment label such as Positive or Negative

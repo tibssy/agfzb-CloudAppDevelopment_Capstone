@@ -99,7 +99,7 @@ def get_dealer_details(request, dealer_id):
     if request.method == 'GET':
         url = "https://eu-gb.functions.appdomain.cloud/api/v1/web/tibssy1982_dev/api/get-review"
         reviews = get_dealer_reviews_from_cf(url, dealerId=dealer_id)
-        review_names = ', '.join([f'[ Name: {review.name}, Review: {review.review} ]' for review in reviews])
+        review_names = ', '.join([f'[ Name: {review.name}, Review: {review.review}, Sentiment: {review.sentiment} ]' for review in reviews])
         # Return a list of dealer short name
         return HttpResponse(review_names)
 
