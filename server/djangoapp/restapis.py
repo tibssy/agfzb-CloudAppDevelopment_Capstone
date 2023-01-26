@@ -95,10 +95,8 @@ def analyze_review_sentiments(dealerreview):
     if not dealerreview:
         return "neutral"
 
-    url = "https://api.eu-gb.natural-language-understanding.watson.cloud.ibm.com/instances/b2f336d6-2fd5-4890-a58a-9e994467faf8"
-    # url = None
-    api_key = "a-iijB6HCqi2D5_e0q7cjEJSRuml2z3NlGa_cvJa3Bvi"
-    # api_key = None
+    url = None
+    api_key = None
     # - Call get_request() with specified arguments
     json_data = get_request(url=f'{url}/v1/analyze', api_key=api_key, version="2018-03-16", text=dealerreview, features="sentiment", return_analyzed_text=True, language='en')
     if json_data and json_data.get("sentiment"):
