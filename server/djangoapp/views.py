@@ -83,25 +83,22 @@ def get_dealerships(request):
         url = 'https://eu-gb.functions.appdomain.cloud/api/v1/web/tibssy1982_dev/api/get-dealership'
         # Get dealers from the URL
         dealerships = get_dealers_from_cf(url)
-        # Concat all dealer's short name
-        # dealer_names = ' '.join([dealer.short_name for dealer in dealerships])
-        dealer_names = [dealer.short_name for dealer in dealerships]
-        # Return a list of dealer short name
         context['dealerships'] = dealerships
-        # return HttpResponse(dealer_names)
         return render(request, 'djangoapp/index.html', context)
 
 
 # Create a `get_dealer_details` view to render the reviews of a dealer
 def get_dealer_details(request, dealer_id):
-# def get_dealer_details(request):
     context = {}
     if request.method == 'GET':
         url = "https://eu-gb.functions.appdomain.cloud/api/v1/web/tibssy1982_dev/api/get-review"
         reviews = get_dealer_reviews_from_cf(url, dealerId=dealer_id)
-        review_names = ', '.join([f'[ Name: {review.name}, Review: {review.review}, Sentiment: {review.sentiment} ]' for review in reviews])
+        print(reviews)
+        # review_names = ', '.join([f'[ Name: {review.name}, Review: {review.review}, Sentiment: {review.sentiment} ]' for review in reviews])
         # Return a list of dealer short name
-        return HttpResponse(review_names)
+        # return HttpResponse(review_names)
+        context['reviews'] = reviews
+        return render(request, 'djangoapp/dealer_details.html', context)
 
 
 # Create a `add_review` view to submit a review
@@ -115,14 +112,18 @@ def add_review(request, dealer_id):
         review = {}
         review["name"] = f'{first_name} {last_name}' if first_name and last_name else request.user.username
         review["time"] = datetime.utcnow().isoformat()
+        review["car_make"] = 'Subaru'
+        review["car_model"] = 'Foster'
+        review["car_year"] = 2020
         review["dealership"] = int(dealer_id)
-        review["review"] = "This is a great car dealer"
+        review["review"] = "worst ever dealership"
         review["purchase"] = "false"
 
         print(review)
 
         json_payload = {"review": review}
-        review_response = post_request(url, json_payload, dealerId=dealer_id)
+        # review_response = post_request(url, json_payload, dealerId=dealer_id)
 
 
-        return HttpResponse(review_response)
+        # return HttpResponse(review_response)
+        return HttpResponse('hello')
