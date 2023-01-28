@@ -41,7 +41,10 @@
         </div>
     </nav>
 <!-- Add reviews as cards -->
-    <div class="container mt-4 p-3">
+    <div class="container mt-4">
+        <div class="container border shadow pt-2 mb-4">
+            <h3>Reviews for <b>{{dealer}}</b></h3>
+        </div>
         <div class="card-columns">
             {% for review in reviews %}
                 <div class="card border shadow">
@@ -52,7 +55,6 @@
                         <h5 class="card-text">{{review.review}}</h5>
                     </div>
                 </div>
-
             {% endfor %}
         </div>
     </div>

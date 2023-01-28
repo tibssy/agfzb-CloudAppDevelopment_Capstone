@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404, render, redirect
 # from .models import related models
 # from .restapis import related methods
-from .restapis import get_dealers_from_cf, get_dealer_reviews_from_cf, post_request
+from .restapis import get_dealers_from_cf, get_dealer_reviews_from_cf, get_dealer_by_id, post_request
 from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
 from datetime import datetime
@@ -12,6 +12,7 @@ import json
 
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
+dealerships = None
 
 
 # Create your views here.
@@ -72,6 +73,9 @@ def registration_request(request):
         else:
             return render(request, 'djangoapp/registration.html', context)
 
+
+
+
 # Update the `get_dealerships` view to render the index page with a list of dealerships
 # def get_dealerships(request):
 #     context = {}
@@ -83,6 +87,11 @@ def get_dealerships(request):
         url = 'https://eu-gb.functions.appdomain.cloud/api/v1/web/tibssy1982_dev/api/get-dealership'
         # Get dealers from the URL
         dealerships = get_dealers_from_cf(url)
+
+        # Stored Dealer Names With Ids in MIDDLEWARE
+        request.session["dealerships"] = {dealer.id: dealer.full_name for dealer in dealerships}
+        request.session.save()
+
         context['dealerships'] = dealerships
         return render(request, 'djangoapp/index.html', context)
 
@@ -93,10 +102,13 @@ def get_dealer_details(request, dealer_id):
     if request.method == 'GET':
         url = "https://eu-gb.functions.appdomain.cloud/api/v1/web/tibssy1982_dev/api/get-review"
         reviews = get_dealer_reviews_from_cf(url, dealerId=dealer_id)
-        print(reviews)
-        # review_names = ', '.join([f'[ Name: {review.name}, Review: {review.review}, Sentiment: {review.sentiment} ]' for review in reviews])
-        # Return a list of dealer short name
-        # return HttpResponse(review_names)
+
+        if request.session.get('dealerships'):
+            context['dealer'] = request.session["dealerships"][str(dealer_id)]
+        else:
+            dealer_url = 'https://eu-gb.functions.appdomain.cloud/api/v1/web/tibssy1982_dev/api/get-dealership'
+            context['dealer'] = get_dealer_by_id(dealer_url, dealer_id)
+
         context['reviews'] = reviews
         return render(request, 'djangoapp/dealer_details.html', context)
 
@@ -109,7 +121,7 @@ def add_review(request, dealer_id):
         first_name = request.user.first_name
         last_name = request.user.last_name
 
-        review = {}
+        review = dict()
         review["name"] = f'{first_name} {last_name}' if first_name and last_name else request.user.username
         review["time"] = datetime.utcnow().isoformat()
         review["car_make"] = 'Subaru'
@@ -119,11 +131,8 @@ def add_review(request, dealer_id):
         review["review"] = "worst ever dealership"
         review["purchase"] = "false"
 
-        print(review)
-
         json_payload = {"review": review}
         # review_response = post_request(url, json_payload, dealerId=dealer_id)
-
 
         # return HttpResponse(review_response)
         return HttpResponse('hello')

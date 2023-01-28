@@ -6,6 +6,8 @@ from .models import CarDealer, DealerReview
 from requests.auth import HTTPBasicAuth
 
 
+dealers = None
+
 # Create a `get_request` to make HTTP GET requests
 def get_request(url, **kwargs):
     # print(f'get_request: {kwargs}')
@@ -44,6 +46,7 @@ def post_request(url, json_payload, **kwargs):
 def get_dealers_from_cf(url, **kwargs):
     results = []
     state = kwargs.get('state')
+    print(f'kwargs: {kwargs}')
     # Call get_request with a URL parameter
     dealers = get_request(url, state=state)
     # For each dealer object
@@ -95,7 +98,8 @@ def analyze_review_sentiments(dealerreview):
     if not dealerreview:
         return "neutral"
 
-    url = None
+    url = "https://api.eu-gb.natural-language-understanding.watson.cloud.ibm.com/instances/b2f336d6-2fd5-4890-a58a-9e994467faf8"
+    # url = None
     api_key = None
     # - Call get_request() with specified arguments
     json_data = get_request(url=f'{url}/v1/analyze', api_key=api_key, version="2018-03-16", text=dealerreview, features="sentiment", return_analyzed_text=True, language='en')
@@ -105,4 +109,8 @@ def analyze_review_sentiments(dealerreview):
     else:
         print("neutral")
         return "neutral"
+
+def get_dealer_by_id(url, dealer_id):
+    dealers = get_request(url)
+    return next(filter(lambda x: (x.get("id") == dealer_id), dealers)).get("full_name")
 
