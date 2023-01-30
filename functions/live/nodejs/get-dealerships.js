@@ -8,8 +8,10 @@ async function main(params) {
         authenticator: authenticator
         });
     cloudant.setServiceUrl(params.COUCH_URL);
+    let selector = (params.state) ? {state:params.state} : (params.dealerId) ? {id:parseInt(params.dealerId)} : {};
+    console.log(selector)
     try {
-        let dealerships = await cloudant.postFind({ db: dbName, selector:{state:params.state}});
+        let dealerships = await cloudant.postFind({ db: dbName, selector:selector});
         return { headers: { 'Content-Type': 'application/json' }, body: dealerships.result.docs }
     } catch (error) {
         return { error: error.description };
