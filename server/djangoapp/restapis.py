@@ -144,7 +144,8 @@ def analyze_review_sentiments(dealer_review):
                             version='2022-08-10',
                             text=dealer_review,
                             features='sentiment',
-                            return_analyzed_text=True, language='en')
+                            return_analyzed_text=True,
+                            language='en')
 
     if json_data and json_data.get('sentiment'):
         return json_data['sentiment']['document']['label']
