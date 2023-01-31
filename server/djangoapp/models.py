@@ -1,15 +1,13 @@
 from django.db import models
-from django.utils.timezone import now
 
 
-# Create your models here.
-
-# <HINT> Create a Car Make model `class CarMake(models.Model)`:
-# - Name
-# - Description
-# - Any other fields you would like to include in car make model
-# - __str__ method to print a car make object
 class CarMake(models.Model):
+    """
+    This class CarMake is a model that stores the name and description of a car make.
+    It has two fields: name and description. The name field is a CharField with a max length of 50 that cannot be null.
+    The description field is a CharField with a max length of 300.
+    This class has a __str__ method that returns a string representation of the CarMake object.
+    """
     name = models.CharField(null=False, max_length=50)
     description = models.CharField(max_length=300)
 
@@ -17,15 +15,20 @@ class CarMake(models.Model):
         return f'Name: {self.name}, Description: {self.description}'
 
 
-# <HINT> Create a Car Model model `class CarModel(models.Model):`:
-# - Many-To-One relationship to Car Make model (One Car Make has many Car Models, using ForeignKey field)
-# - Name
-# - Dealer id, used to refer a dealer created in cloudant database
-# - Type (CharField with a choices argument to provide limited choices such as Sedan, SUV, WAGON, etc.)
-# - Year (DateField)
-# - Any other fields you would like to include in car model
-# - __str__ method to print a car make object
 class CarModel(models.Model):
+    """
+    CarModel is a class for cars models that contains information about the car make, name, dealer ID, type, and year.
+
+    Attributes:
+    make (ForeignKey): CarMake object associated with this car model
+    name (CharField): Name of the car model
+    dealer_id (IntegerField): ID of the dealer associated with this car model
+    type (CharField): Type of the car model (sedan, suv, wagon)
+    year (DateField): Year of the car model
+
+    Methods:
+    __str__(): Returns a string representation of the car model
+    """
     SEDAN = 'sedan'
     SUV = 'suv'
     WAGON = 'wagon'
@@ -41,9 +44,7 @@ class CarModel(models.Model):
         return f'Name: {self.name}, Dealer ID: {self.dealer_id}, Type: {self.type}, Year: {self.year}'
 
 
-# <HINT> Create a plain Python class `CarDealer` to hold dealer data
 class CarDealer:
-
     def __init__(self, address, city, full_name, id, lat, long, short_name, st, state, zip):
         self.address = address
         self.city = city
@@ -59,7 +60,7 @@ class CarDealer:
     def __str__(self):
         return f'Dealer name: {self.full_name}'
 
-# <HINT> Create a plain Python class `DealerReview` to hold review data
+
 class DealerReview:
     def __init__(self, dealership, name, purchase, review, purchase_date, car_make, car_model, car_year, sentiment, id):
         self.dealership = dealership
