@@ -139,11 +139,18 @@ def analyze_review_sentiments(dealer_review):
 
     url = 'https://api.eu-gb.natural-language-understanding.watson.cloud.ibm.com/instances/b2f336d6-2fd5-4890-a58a-9e994467faf8'
     api_key = None
-    json_data = get_request(url=f'{url}/v1/analyze', api_key=api_key, version='2022-08-10', text=dealer_review, features='sentiment', return_analyzed_text=True, language='en')
+    json_data = get_request(url=f'{url}/v1/analyze',
+                            api_key=api_key,
+                            version='2022-08-10',
+                            text=dealer_review,
+                            features='sentiment',
+                            return_analyzed_text=True, language='en')
+
     if json_data and json_data.get('sentiment'):
         return json_data['sentiment']['document']['label']
     else:
         return 'neutral'
+
 
 def get_dealer_by_id_from_cf(url, dealer_id):
     """
