@@ -2,6 +2,7 @@ import requests
 import json
 from .models import CarDealer, DealerReview
 from requests.auth import HTTPBasicAuth
+from django.conf import settings
 
 
 def get_request(url, **kwargs):
@@ -137,10 +138,8 @@ def analyze_review_sentiments(dealer_review):
     if not dealer_review:
         return 'neutral'
 
-    url = 'https://api.eu-gb.natural-language-understanding.watson.cloud.ibm.com/instances/b2f336d6-2fd5-4890-a58a-9e994467faf8'
-    api_key = None
-    json_data = get_request(url=f'{url}/v1/analyze',
-                            api_key=api_key,
+    json_data = get_request(url=f'{settings.NLU_URL}/v1/analyze',
+                            api_key=settings.NLU_KEY,
                             version='2022-08-10',
                             text=dealer_review,
                             features='sentiment',

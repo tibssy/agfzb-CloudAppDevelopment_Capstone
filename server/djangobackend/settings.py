@@ -125,3 +125,7 @@ STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 MEDIA_ROOT = os.path.join(STATIC_ROOT, 'media')
 MEDIA_URL = '/media/'
+
+CLOUD_URL = 'https://eu-gb.functions.appdomain.cloud/api/v1/web/tibssy1982_dev/api'
+NLU_URL = 'https://api.eu-gb.natural-language-understanding.watson.cloud.ibm.com/instances/b2f336d6-2fd5-4890-a58a-9e994467faf8'
+NLU_KEY = 'nlu api-key'

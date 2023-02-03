@@ -5,6 +5,7 @@ from django.shortcuts import render, redirect
 from .models import CarModel
 from .restapis import get_dealers_from_cf, get_dealer_reviews_from_cf, get_dealer_by_id_from_cf, post_request
 from django.contrib.auth import login, logout, authenticate
+from django.conf import settings
 
 
 logger = logging.getLogger(__name__)
@@ -126,7 +127,7 @@ def get_dealerships(request):
         the list of dealerships.
     """
     if request.method == 'GET':
-        url = 'https://eu-gb.functions.appdomain.cloud/api/v1/web/tibssy1982_dev/api/get-dealership'
+        url = f'{settings.CLOUD_URL}/get-dealership'
         dealerships = get_dealers_from_cf(url)
         context = {'dealerships': dealerships}
         return render(request, 'djangoapp/index.html', context)
@@ -146,8 +147,8 @@ def get_dealer_details(request, dealer_id):
         HttpResponse: The response object containing the rendered page.
     """
     if request.method == 'GET':
-        url = 'https://eu-gb.functions.appdomain.cloud/api/v1/web/tibssy1982_dev/api/get-review'
-        dealer_url = 'https://eu-gb.functions.appdomain.cloud/api/v1/web/tibssy1982_dev/api/get-dealership'
+        url = f'{settings.CLOUD_URL}/get-review'
+        dealer_url = f'{settings.CLOUD_URL}/get-dealership'
         reviews = get_dealer_reviews_from_cf(url, dealerId=dealer_id)
         dealer = get_dealer_by_id_from_cf(dealer_url, dealer_id)
         context = {'dealer_id': dealer_id, 'dealer': dealer, 'reviews': reviews}
@@ -168,13 +169,14 @@ def add_review(request, dealer_id):
     Redirects to the details page of the car dealership.
     """
     if request.user.is_authenticated:
-        url = 'https://eu-gb.functions.appdomain.cloud/api/v1/web/tibssy1982_dev/api/post-review'
-        dealer_url = 'https://eu-gb.functions.appdomain.cloud/api/v1/web/tibssy1982_dev/api/get-dealership'
+        url = f'{settings.CLOUD_URL}/post-review'
+        dealer_url = f'{settings.CLOUD_URL}/get-dealership'
         dealer = get_dealer_by_id_from_cf(dealer_url, dealer_id)
         first_name = request.user.first_name
         last_name = request.user.last_name
 
         if request.method == 'GET':
+            print(f'GET called')
             cars = CarModel.objects.all()
             context = {'dealer_id': dealer_id, 'dealer': dealer, 'cars': cars}
             return render(request, 'djangoapp/add_review.html', context)
